@@ -1,0 +1,15 @@
+{
+  "name": "Dietrix — رژیم‌نویسی بر اساس وزن ایده‌آل",
+  "short_name": "Dietrix",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EAF2FF",
+  "theme_color": "#6A4BD4",
+  "description": "محاسبه کالری و برنامه غذایی بر اساس وزن ایده‌آل (IBW / AIBW)",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

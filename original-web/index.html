@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dietrix | رژیم‌نویسی بر اساس وزن ایده‌آل</title>
+<meta name="theme-color" content="#6A4BD4">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="font.css">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" type="image/png" href="icon.svg">
+<style>
+  :root{
+    color-scheme:light;
+    --text:#23222B; --text2:#63616F;
+    --bg-grad:linear-gradient(160deg,#EAF2FF 0%,#F3ECFF 45%,#E6F7F0 100%);
+    --glass:rgba(255,255,255,.55); --glass-strong:rgba(255,255,255,.78);
+    --glass-border:rgba(255,255,255,.75);
+    --input-bg:rgba(255,255,255,.8); --input-border:rgba(255,255,255,.95);
+    --input-shadow:inset 0 1px 3px rgba(80,90,160,.06);
+    --accent:#6A4BD4; --accent2:#1F6FC2;
+    --focus-ring:rgba(39,131,222,.18);
+    --btn-grad:linear-gradient(135deg,#1F6FC2,#6A4BD4);
+    --btn-shadow:0 8px 24px rgba(90,80,210,.35);
+    --title-grad:linear-gradient(120deg,#1F6FC2 10%,#6A4BD4 60%,#2F9464 110%);
+    --num-grad:linear-gradient(120deg,#1F6FC2,#6A4BD4);
+    --hl-bg:linear-gradient(135deg,rgba(39,131,222,.16),rgba(124,92,222,.16));
+    --seg-bg:rgba(255,255,255,.4);
+    --seg-active:linear-gradient(135deg,rgba(255,255,255,.95),rgba(255,255,255,.75));
+    --item-bg:rgba(255,255,255,.55);
+    --kcal-bg:rgba(124,92,222,.12); --kcal-text:#6A4BD4;
+    --warn-bg:rgba(251,235,222,.8); --warn-border:rgba(197,111,44,.25); --warn-text:#8F5420; --warn-ico:#C56F2C;
+    --err-bg:rgba(252,233,231,.85); --err-border:rgba(216,87,75,.3); --err-text:#B4423A;
+    --shadow:0 8px 32px rgba(80,90,160,.12), 0 2px 8px rgba(80,90,160,.06);
+    --blob1c:rgba(140,180,255,.5); --blob2c:rgba(200,170,255,.45); --blob3c:rgba(150,230,190,.4);
+    --radius:20px;
+  }
+  [data-theme="dark"]{
+    color-scheme:dark;
+    --text:#F4F4F6; --text2:rgba(255,255,255,.68);
+    --bg-grad:linear-gradient(160deg,#0E1220 0%,#161022 45%,#0D1714 100%);
+    --glass:rgba(32,34,52,.55); --glass-strong:rgba(46,48,70,.65);
+    --glass-border:rgba(255,255,255,.14);
+    --input-bg:rgba(255,255,255,.08); --input-border:rgba(255,255,255,.18);
+    --input-shadow:inset 0 1px 3px rgba(0,0,0,.3);
+    --accent:#B9A5F5; --accent2:#5E9FE8;
+    --focus-ring:rgba(94,159,232,.3);
+    --btn-grad:linear-gradient(135deg,#2E7FD4,#7A5CE8);
+    --btn-shadow:0 8px 24px rgba(60,50,160,.5);
+    --title-grad:linear-gradient(120deg,#5E9FE8 10%,#B9A5F5 60%,#72BC8F 110%);
+    --num-grad:linear-gradient(120deg,#7FB5F0,#C0AAFF);
+    --hl-bg:linear-gradient(135deg,rgba(94,159,232,.2),rgba(150,120,240,.2));
+    --seg-bg:rgba(255,255,255,.06);
+    --seg-active:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.1));
+    --item-bg:rgba(255,255,255,.07);
+    --kcal-bg:rgba(167,139,250,.18); --kcal-text:#C9B8FF;
+    --warn-bg:rgba(222,146,85,.13); --warn-border:rgba(222,146,85,.35); --warn-text:#EBB588; --warn-ico:#DE9255;
+    --err-bg:rgba(233,115,102,.15); --err-border:rgba(233,115,102,.4); --err-text:#F0968C;
+    --shadow:0 8px 32px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.3);
+    --blob1c:rgba(70,110,220,.32); --blob2c:rgba(140,100,230,.28); --blob3c:rgba(60,170,120,.22);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{transition:none!important; animation:none!important;} }
+  body{
+    font-family:"IRANSansDN","Vazirmatn","Vazir","IRANSans","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+    color:var(--text); font-size:16px; line-height:1.7;
+    min-height:100vh; padding:32px 16px 72px;
+    background:var(--bg-grad);
+    background-attachment:fixed;
+    overflow-x:hidden;
+    transition:background .3s, color .3s;
+  }
+  .blob{position:fixed; border-radius:50%; filter:blur(90px); z-index:-1; pointer-events:none; transition:background .3s;}
+  .blob1{width:480px; height:480px; background:var(--blob1c); top:-140px; right:-140px;}
+  .blob2{width:440px; height:440px; background:var(--blob2c); bottom:-160px; left:-120px;}
+  .blob3{width:380px; height:380px; background:var(--blob3c); top:38%; left:32%;}
+  .wrap{max-width:980px; margin:0 auto;}
+
+  .ico{width:1.15em; height:1.15em; stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:-3px;}
+
+  /* ---------- Theme toggle ---------- */
+  #themeToggle{
+    position:fixed; top:16px; inset-inline-start:16px; z-index:50;
+    width:46px; height:46px; border-radius:999px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--glass-strong); border:1px solid var(--glass-border);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    color:var(--accent); box-shadow:var(--shadow);
+    transition:transform .15s;
+  }
+  #themeToggle:hover{transform:scale(1.07);}
+  #themeToggle:focus-visible{outline:3px solid var(--focus-ring); outline-offset:2px;}
+  #themeToggle .ico{width:21px; height:21px;}
+  [data-theme="dark"] .only-light{display:none;}
+  html:not([data-theme="dark"]) .only-dark{display:none;}
+
+  /* ---------- Header ---------- */
+  header{text-align:center; padding:8px 0 32px;}
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--glass-strong); border:1px solid var(--glass-border);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    color:var(--accent); font-size:14px; font-weight:700;
+    padding:6px 18px; border-radius:999px; margin-bottom:16px;
+    box-shadow:var(--shadow);
+  }
+  header h1{
+    font-size:34px; font-weight:900; letter-spacing:-.5px;
+    background:var(--title-grad);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  header p{color:var(--text2); margin-top:10px; max-width:640px; margin-inline:auto; font-size:15.5px;}
+
+  /* ---------- Glass card ---------- */
+  .glass{
+    background:var(--glass);
+    backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid var(--glass-border);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    transition:background .3s, border-color .3s, transform .25s ease, box-shadow .25s ease;
+  }
+
+  /* ---------- Hover effects ---------- */
+  :root{ --hover-shadow:0 16px 40px rgba(80,90,160,.2), 0 4px 12px rgba(80,90,160,.1); --hover-border:rgba(124,92,222,.45); }
+  [data-theme="dark"]{ --hover-shadow:0 16px 40px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.35); --hover-border:rgba(185,165,245,.45); }
+  .stat:hover, .meal:hover, .ref-card:hover{
+    transform:translateY(-5px);
+    box-shadow:var(--hover-shadow);
+    border-color:var(--hover-border);
+  }
+  .chip{transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;}
+  .chip:hover{transform:translateY(-3px) scale(1.04); box-shadow:var(--hover-shadow); border-color:var(--hover-border);}
+  .item{transition:background .2s ease, border-color .2s ease, transform .2s ease;}
+  .item:hover{transform:translateY(-2px); border-color:var(--hover-border); background:var(--hl-bg), var(--item-bg);}
+  .badge{transition:transform .2s ease, box-shadow .2s ease;}
+  .badge:hover{transform:translateY(-2px) scale(1.03); box-shadow:var(--hover-shadow);}
+  .seg label:hover{color:var(--accent); background:var(--seg-bg);}
+  input[type=number]:hover, select:hover{border-color:var(--hover-border);}
+  details.formulas summary{transition:color .2s ease;}
+  details.formulas summary:hover{color:var(--accent);}
+  details.formulas:hover{border-color:var(--hover-border);}
+  .section-title .ic{transition:transform .25s ease, color .25s ease;}
+  .section-title:hover .ic{transform:rotate(-8deg) scale(1.1);}
+  .meal-head .mi, .ref-card .em{transition:transform .25s ease;}
+  .meal:hover .mi{transform:scale(1.15) rotate(6deg);}
+  .ref-card:hover .em{transform:scale(1.15) rotate(-6deg);}
+  .stat .top .ico{transition:transform .25s ease;}
+  .stat:hover .top .ico{transform:scale(1.25);}
+  .card{padding:32px;}
+
+  /* ---------- Form ---------- */
+  .form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:20px 24px;}
+  .field{display:flex; flex-direction:column; gap:8px;}
+  .field > label, .field > .lbl-row{font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:7px;}
+  .field .ico{color:var(--accent);}
+  .hint{font-size:12.5px; color:var(--text2); font-weight:400;}
+  input[type=number], select{
+    font-family:inherit; font-size:16px; color:var(--text);
+    background:var(--input-bg); border:1px solid var(--input-border);
+    border-radius:14px; padding:11px 16px; width:100%; min-height:50px;
+    box-shadow:var(--input-shadow);
+    transition:border-color .15s, box-shadow .15s, background .3s;
+  }
+  input[type=number]:focus, select:focus{outline:none; border-color:var(--accent2); box-shadow:0 0 0 4px var(--focus-ring);}
+  /* Dropdown options: force solid readable colors (glass/transparent colors leak into the native menu) */
+  select option{background:#FFFFFF; color:#23222B;}
+  [data-theme="dark"] select option{background:#1E2030; color:#F4F4F6;}
+  input::placeholder{color:var(--text2); opacity:.7;}
+  .seg{display:flex; background:var(--seg-bg); border:1px solid var(--glass-border); border-radius:14px; padding:4px; gap:4px;}
+  .seg input{position:absolute; opacity:0; pointer-events:none;}
+  .seg label{
+    flex:1; text-align:center; font-size:15px; font-weight:700; color:var(--text2);
+    padding:10px 8px; min-height:44px; display:flex; align-items:center; justify-content:center; gap:7px;
+    border-radius:10px; cursor:pointer; transition:all .15s;
+  }
+  .seg input:checked + label{
+    background:var(--seg-active);
+    color:var(--accent); box-shadow:0 2px 10px rgba(0,0,0,.12);
+  }
+  .seg input:focus-visible + label{outline:2px solid var(--accent2); outline-offset:1px;}
+  .btn{
+    grid-column:1/-1; display:flex; align-items:center; justify-content:center; gap:10px;
+    font-family:inherit; font-size:17px; font-weight:800; color:#fff;
+    background:var(--btn-grad);
+    border:none; border-radius:14px; padding:15px; min-height:54px; cursor:pointer;
+    box-shadow:var(--btn-shadow);
+    transition:transform .15s, box-shadow .15s; margin-top:4px;
+  }
+  .btn{background-size:150% 150%; background-position:0% 50%;}
+  .btn:hover{transform:translateY(-2px); background-position:100% 50%; box-shadow:0 12px 32px rgba(90,80,210,.5);}
+  .btn:active{transform:translateY(0);}
+  .btn:focus-visible{outline:3px solid var(--focus-ring); outline-offset:2px;}
+  .error{display:none; grid-column:1/-1; background:var(--err-bg); border:1px solid var(--err-border); color:var(--err-text); border-radius:14px; padding:12px 16px; font-size:14.5px;}
+  .error.show{display:block;}
+
+  /* ---------- Results ---------- */
+  #results{display:none; margin-top:36px;}
+  #results.show{display:block; animation:fadeIn .45s ease;}
+
+  /* ---------- Section filter ---------- */
+  .res-filter{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:12px 16px; border-radius:16px;}
+  .rf-title{font-size:13.5px; font-weight:800; color:var(--text2); margin-inline-end:4px;}
+  .f-chip{
+    font:inherit; font-size:13.5px; font-weight:700; color:var(--text2); cursor:pointer;
+    background:var(--seg-bg); border:1px solid var(--glass-border); border-radius:999px;
+    padding:7px 14px; min-height:38px;
+    transition:all .2s ease;
+  }
+  .f-chip:hover{transform:translateY(-2px); border-color:var(--hover-border); color:var(--accent);}
+  .f-chip.active{background:var(--btn-grad); color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(90,80,210,.35);}
+  .res-sec{display:none;}
+  .res-sec.show{display:block; animation:fadeIn .35s ease;}
+  .res-sec .section-title:first-child{margin-top:32px;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+  .section-title{font-size:21px; font-weight:800; margin:44px 0 18px; display:flex; align-items:center; gap:12px;}
+  .section-title:first-child{margin-top:0;}
+  .section-title .ic{
+    width:38px; height:38px; border-radius:12px; flex:none;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--glass-strong); border:1px solid var(--glass-border);
+    box-shadow:var(--shadow); color:var(--accent); font-size:18px;
+  }
+  .section-title .ic .ico{width:20px; height:20px;}
+  .section-title .hint{font-weight:600;}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  .stats.macros{grid-template-columns:repeat(3,1fr);}
+  .macro-ctrl{display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; padding:14px 18px; border-radius:16px; margin-bottom:16px; font-size:13.5px;}
+  .macro-ctrl .mc-title{font-weight:800; color:var(--text2);}
+  .macro-ctrl label{display:flex; align-items:center; gap:7px; font-weight:600; margin:0;}
+  .macro-ctrl input[type=number]{width:72px; padding:8px 10px; text-align:center;}
+  .mc-reset{font:inherit; font-size:12.5px; font-weight:700; color:var(--text2); background:transparent; border:1px solid var(--input-border); border-radius:10px; padding:7px 14px; cursor:pointer; transition:all .2s ease;}
+  .mc-reset:hover{color:var(--accent); border-color:var(--hover-border);}
+  .mc-warn{display:none; color:var(--err-text); font-weight:700;}
+  .mc-warn.show{display:inline;}
+  .hist{border-radius:var(--radius); overflow:hidden;}
+  .hist-row{display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; padding:13px 20px; border-bottom:1px solid var(--glass-border); font-size:13.5px; transition:background .2s ease;}
+  .hist-row:hover{background:var(--item-bg);}
+  .hist-row:last-child{border-bottom:none;}
+  .h-date{font-weight:700; color:var(--text2);}
+  .h-kcal{font-weight:800; color:var(--accent);}
+  .h-del{margin-inline-start:auto; background:transparent; border:none; color:var(--text2); cursor:pointer; font-size:14px; line-height:1; padding:6px 9px; border-radius:9px; transition:all .2s ease;}
+  .h-del:hover{color:var(--err-text); background:var(--err-bg);}
+  .hist-clear{margin-inline-start:auto; font:inherit; font-size:12.5px; font-weight:700; color:var(--text2); background:transparent; border:1px solid var(--input-border); border-radius:10px; padding:7px 13px; cursor:pointer; transition:all .2s ease;}
+  .hist-clear:hover{color:var(--err-text); border-color:var(--err-border);}
+  .stat{padding:20px 22px; position:relative; overflow:hidden;}
+  .stat .top{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text2); font-weight:700;}
+  .stat .top .ico{width:17px; height:17px; color:var(--accent);}
+  .stat .val{font-size:28px; font-weight:900; margin-top:6px; letter-spacing:-.5px;}
+  .stat .unit{font-size:13px; color:var(--text2); font-weight:500;}
+  .stat.hl{background:var(--hl-bg), var(--glass);}
+  .stat.hl .val{
+    background:var(--num-grad);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  .note{margin-top:16px; padding:13px 18px; font-size:14px; color:var(--text2); border-radius:14px;}
+  .note.warn{background:var(--warn-bg); border:1px solid var(--warn-border); color:var(--warn-text);}
+
+  .totals{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px;}
+  .chip{
+    display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:700;
+    background:var(--glass-strong); border:1px solid var(--glass-border);
+    border-radius:999px; padding:7px 16px; box-shadow:var(--shadow);
+  }
+  .chip b{background:var(--num-grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+  .meals{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  .meal{padding:22px;}
+  .meal-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px;}
+  .meal-head .mt{display:flex; align-items:center; gap:10px;}
+  .meal-head .mi{
+    width:40px; height:40px; border-radius:12px; flex:none; font-size:19px;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--seg-active);
+    border:1px solid var(--glass-border); box-shadow:0 2px 8px rgba(0,0,0,.08);
+  }
+  .meal-head h3{font-size:16.5px; font-weight:800;}
+  .meal-head .kcal{
+    font-size:12.5px; font-weight:700; white-space:nowrap; color:var(--kcal-text);
+    background:var(--kcal-bg); border-radius:999px; padding:4px 12px;
+  }
+  .items{display:flex; flex-wrap:wrap; gap:8px;}
+  .item{
+    display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:600;
+    background:var(--item-bg); border:1px solid var(--glass-border);
+    border-radius:999px; padding:5px 13px;
+  }
+  .dot{display:inline-block; width:9px; height:9px; border-radius:99px; flex:none;}
+
+  .ref{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  .ref-card{padding:22px;}
+  .ref-card h3{font-size:15.5px; font-weight:800; display:flex; align-items:center; gap:9px;}
+  .ref-card .em{
+    width:36px; height:36px; border-radius:11px; flex:none; font-size:17px;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--seg-active);
+    border:1px solid var(--glass-border); box-shadow:0 2px 8px rgba(0,0,0,.08);
+  }
+  .ref-card .k{font-size:12.5px; color:var(--text2); font-weight:600; margin-top:6px;}
+  .ref-card ul{margin:10px 20px 0 0; padding:0; color:var(--text2); font-size:14px;}
+  .ref-card li{margin-bottom:4px;}
+
+  details.formulas{margin-top:36px; overflow:hidden;}
+  details.formulas summary{
+    cursor:pointer; padding:18px 26px; font-weight:800; font-size:15.5px; list-style:none;
+    display:flex; align-items:center; gap:10px; min-height:54px;
+  }
+  details.formulas summary .ico{color:var(--accent);}
+  details.formulas summary::-webkit-details-marker{display:none;}
+  details.formulas summary::after{content:"+"; font-size:22px; color:var(--text2); margin-right:auto;}
+  details.formulas[open] summary::after{content:"−";}
+  .formulas-body{padding:0 26px 22px; color:var(--text2); font-size:14.5px;}
+  .formulas-body p{margin-bottom:8px;}
+  .formulas-body b{color:var(--text);}
+
+  .disclaimer{
+    margin-top:32px; background:var(--warn-bg); border:1px solid var(--warn-border);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border-radius:var(--radius); padding:18px 22px; font-size:14px; color:var(--warn-text);
+    display:flex; gap:12px; align-items:flex-start; box-shadow:var(--shadow);
+  }
+  .disclaimer .ico{color:var(--warn-ico); width:20px; height:20px; margin-top:3px;}
+
+  @media (max-width:720px){
+    body{padding:20px 14px 56px;}
+    header h1{font-size:26px;}
+    header{padding-top:40px;}
+    .card{padding:22px;}
+    .form-grid{grid-template-columns:1fr;}
+    .stats{grid-template-columns:1fr 1fr;}
+    .meals{grid-template-columns:1fr;}
+    .ref{grid-template-columns:1fr;}
+    .blob{filter:blur(70px);}
+  }
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4L12 3z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.8-3.5 3.9-6 7.5-6s6.7 2.5 7.5 6"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-ruler" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="20" rx="2"/><path d="M9 7h3M9 12h3M9 17h3"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M5 8h14l1.5 11a2 2 0 0 1-2 2.2h-13A2 2 0 0 1 3.5 19L5 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-2.5L17 22l-1.5-8"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.7 7-6.7C19 10.5 15 8 14 3c-3 2.5-4 5-3.5 7.5C9.5 9.8 8.8 9 8.5 7.5 6.8 9 5 11.5 5 15.3 5 19.3 8 22 12 22z"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 4.5 14H11l-1 8 8.5-12H12l1-8z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4"/><path d="M4 20h16"/><path d="m7 14 4-4 3 3 5-6"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></symbol>
+    <symbol id="i-plate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21V5.5z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V16"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4M12 17.5h.01"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.5A8.5 8.5 0 1 1 10.5 3a7 7 0 0 0 10.5 10.5z"/></symbol>
+  </defs>
+</svg>
+
+<button id="themeToggle" type="button" aria-label="تغییر حالت روشن و تاریک">
+  <svg class="ico only-light"><use href="#i-moon"/></svg>
+  <svg class="ico only-dark"><use href="#i-sun"/></svg>
+</button>
+
+<div class="wrap">
+
+  <header>
+    <div class="badge"><svg class="ico"><use href="#i-spark"/></svg> محاسبه‌گر هوشمند رژیم غذایی</div>
+    <h1>Dietrix</h1>
+    <p>وزن ایده‌آل (IBW) و وزن تعدیل‌شده (AIBW) شما محاسبه می‌شود، کالری روزانه بر اساس آن تعیین شده و یک برنامه‌ی وعده‌ها و واحدهای غذایی متناسب ارائه می‌شود.</p>
+  </header>
+
+  <form class="glass card" id="dietForm" novalidate>
+    <div class="form-grid">
+      <div class="field">
+        <span class="lbl-row"><svg class="ico"><use href="#i-user"/></svg> جنسیت</span>
+        <div class="seg" role="radiogroup" aria-label="جنسیت">
+          <input type="radio" name="gender" id="g-male" value="male" checked>
+          <label for="g-male">👨 آقا</label>
+          <input type="radio" name="gender" id="g-female" value="female">
+          <label for="g-female">👩 خانم</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="goal"><svg class="ico"><use href="#i-target"/></svg> هدف <span class="hint">(کاهش یا افزایش وزن ماهانه)</span></label>
+        <select id="goal">
+          <option value="0">تثبیت وزن (بدون کسر کالری)</option>
+          <option value="700">کاهش ۳ کیلوگرم در ماه (−۷۰۰ کالری)</option>
+          <option value="1000" selected>کاهش ۴ کیلوگرم در ماه (−۱۰۰۰ کالری)</option>
+          <option value="-500">افزایش ۲ کیلوگرم در ماه (+۵۰۰ کالری)</option>
+          <option value="-700">افزایش ۳ کیلوگرم در ماه (+۷۰۰ کالری)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="height"><svg class="ico"><use href="#i-ruler"/></svg> قد <span class="hint">(سانتی‌متر)</span></label>
+        <input type="number" id="height" inputmode="decimal" placeholder="مثلاً ۱۷۰" min="120" max="220">
+      </div>
+      <div class="field">
+        <label for="weight"><svg class="ico"><use href="#i-scale"/></svg> وزن فعلی <span class="hint">(کیلوگرم)</span></label>
+        <input type="number" id="weight" inputmode="decimal" placeholder="مثلاً ۸۲" min="30" max="250">
+      </div>
+      <div class="field" style="grid-column:1/-1;">
+        <label for="activity"><svg class="ico"><use href="#i-flame"/></svg> سطح فعالیت روزانه</label>
+        <select id="activity">
+          <option value="1.2">بی‌تحرک / استراحت — ضریب ۱٫۲</option>
+          <option value="1.3" selected>فعالیت سبک (کار نشسته، پیاده‌روی کم) — ضریب ۱٫۳</option>
+          <option value="1.4">فعالیت متوسط (ورزش منظم یا کار نیمه‌فعال) — ضریب ۱٫۴</option>
+          <option value="1.5">فعالیت زیاد (کار بدنی یا ورزش سنگین) — ضریب ۱٫۵</option>
+        </select>
+      </div>
+      <div class="error" id="errBox"></div>
+      <button type="submit" class="btn"><svg class="ico"><use href="#i-calc"/></svg> محاسبه کالری و برنامه غذایی</button>
+    </div>
+  </form>
+
+  <div id="results">
+
+    <div class="res-filter glass" id="resFilter" aria-label="انتخاب بخش‌های نمایش">
+      <span class="rf-title">🔍 نمایش بخش‌ها:</span>
+      <button type="button" class="f-chip active" data-sec="stats">📊 نتایج</button>
+      <button type="button" class="f-chip" data-sec="macros">⚡ درشت‌مغذی‌ها</button>
+      <button type="button" class="f-chip" data-sec="units">🧩 واحدهای غذایی</button>
+      <button type="button" class="f-chip" data-sec="meals">🍽 وعده‌ها</button>
+      <button type="button" class="f-chip" data-sec="ref">📖 راهنمای واحدها</button>
+      <button type="button" class="f-chip" data-sec="all">✅ همه</button>
+    </div>
+
+    <section class="res-sec show" data-sec="stats">
+    <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-chart"/></svg></span> نتایج محاسبه</h2>
+    <div class="stats">
+      <div class="stat glass"><div class="top"><svg class="ico"><use href="#i-award"/></svg> وزن ایده‌آل (IBW)</div><div class="val" id="outIbw">—</div><div class="unit">کیلوگرم</div></div>
+      <div class="stat glass"><div class="top"><svg class="ico"><use href="#i-scale"/></svg> <span id="basisLbl">وزن مبنای محاسبه</span></div><div class="val" id="outBasis">—</div><div class="unit">کیلوگرم</div></div>
+      <div class="stat glass"><div class="top"><svg class="ico"><use href="#i-flame"/></svg> کالری نگهدارنده (TEE)</div><div class="val" id="outMaint">—</div><div class="unit">کیلوکالری در روز</div></div>
+      <div class="stat glass hl"><div class="top"><svg class="ico"><use href="#i-zap"/></svg> کالری هدف روزانه</div><div class="val" id="outTarget">—</div><div class="unit">کیلوکالری در روز</div></div>
+    </div>
+    <div class="note glass" id="basisNote"></div>
+    <div class="note warn" id="floorNote" style="display:none;">⚠️ کالری محاسبه‌شده کمتر از ۱۰۰۰ کیلوکالری بود؛ برای حفظ سلامت، برنامه روی حداقل ۱۰۰۰ کیلوکالری تنظیم شد.</div>
+    </section>
+
+    <section class="res-sec" data-sec="macros">
+    <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-zap"/></svg></span> درشت‌مغذی‌های روزانه</h2>
+    <div class="macro-ctrl glass">
+      <span class="mc-title">⚙️ تنظیم درصدها:</span>
+      <label>🍞 کربوهیدرات <input type="number" id="pctCho" min="0" max="100" step="1" value="53"> ٪</label>
+      <label>🍗 پروتئین <input type="number" id="pctPro" min="0" max="100" step="1" value="17"> ٪</label>
+      <label>🥑 چربی <input type="number" id="pctFat" min="0" max="100" step="1" value="30"> ٪</label>
+      <button type="button" class="mc-reset" id="pctReset">↺ بازنشانی</button>
+      <span class="mc-warn" id="pctWarn"></span>
+    </div>
+    <div class="stats macros">
+      <div class="stat glass"><div class="top">🍞 کربوهیدرات (<span id="choPct">۵۳</span>٪)</div><div class="val" id="outCho">—</div><div class="unit">گرم در روز</div></div>
+      <div class="stat glass"><div class="top">🍗 پروتئین (<span id="proPct">۱۷</span>٪)</div><div class="val" id="outPro">—</div><div class="unit">گرم در روز</div></div>
+      <div class="stat glass"><div class="top">🥑 چربی (<span id="fatPct">۳۰</span>٪)</div><div class="val" id="outFat">—</div><div class="unit">گرم در روز</div></div>
+    </div>
+    </section>
+
+    <section class="res-sec" data-sec="units">
+    <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-grid"/></svg></span> واحدهای غذایی روزانه <span class="hint" id="planLabel"></span></h2>
+    <div class="totals" id="totals"></div>
+    </section>
+
+    <section class="res-sec" data-sec="meals">
+    <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-plate"/></svg></span> برنامه وعده‌های غذایی</h2>
+    <div class="meals" id="meals"></div>
+    </section>
+
+    <section class="res-sec" data-sec="ref">
+    <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-book"/></svg></span> هر واحد غذایی یعنی چقدر؟</h2>
+    <div class="ref" id="refCards"></div>
+    </section>
+
+    <details class="formulas glass">
+      <summary><svg class="ico"><use href="#i-info"/></svg> فرمول‌های استفاده‌شده در محاسبه</summary>
+      <div class="formulas-body">
+        <p><b>وزن ایده‌آل (IBW):</b> آقایان: ۲۳ × قد²(متر) | خانم‌ها: ۲۲ × قد²(متر)</p>
+        <p><b>وزن تعدیل‌شده (AIBW):</b> اگر وزن فعلی بیشتر از وزن ایده‌آل باشد: AIBW = IBW + (وزن فعلی − IBW) ÷ ۳</p>
+        <p><b>انرژی نگهدارنده (E):</b> وزن مبنا × ۲۴ (خانم‌ها × ۰٫۹) × ۱٫۱ × ضریب فعالیت (۱٫۲ تا ۱٫۵)</p>
+        <p><b>کسر کالری برای کاهش وزن:</b> کاهش ۳ کیلو در ماه → ۷۰۰− کالری | کاهش ۴ کیلو در ماه → ۱۰۰۰− کالری</p>
+        <p><b>افزودن کالری برای افزایش وزن:</b> افزایش ۲ کیلو در ماه → ۵۰۰+ کالری | افزایش ۳ کیلو در ماه → ۷۰۰+ کالری</p>
+        <p><b>درشت‌مغذی‌ها:</b> پیش‌فرض ۵۳٪ کربوهیدرات و ۱۷٪ پروتئین (هر گرم ۴ کالری) | ۳۰٪ چربی (هر گرم ۹ کالری) — درصدها از بخش «تنظیم درصدها» قابل تغییر است</p>
+      </div>
+    </details>
+
+    <div class="disclaimer">
+      <svg class="ico"><use href="#i-alert"/></svg>
+      <span>این برنامه جنبه‌ی آموزشی و راهنمای کلی دارد و جایگزین مشاوره‌ی متخصص تغذیه نیست. در صورت بارداری، شیردهی، دیابت، بیماری کلیوی یا هر بیماری زمینه‌ای، حتماً با پزشک یا متخصص تغذیه مشورت کنید.</span>
+    </div>
+
+  </div>
+
+  <div id="historySec" style="display:none;">
+    <h2 class="section-title"><span class="ic">🕘</span> تاریخچه محاسبات <button type="button" class="hist-clear" id="histClear">🗑 پاک کردن همه</button></h2>
+    <div class="hist glass" id="histList"></div>
+  </div>
+</div>
+
+<script>
+// ---------- Theme ----------
+const root = document.documentElement;
+function setTheme(t){
+  if(t === "dark") root.setAttribute("data-theme","dark");
+  else root.removeAttribute("data-theme");
+  try{ localStorage.setItem("diet-theme", t); }catch(e){}
+}
+(function(){
+  let saved = null;
+  try{ saved = localStorage.getItem("diet-theme"); }catch(e){}
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  setTheme(saved || (prefersDark ? "dark" : "light"));
+})();
+document.getElementById("themeToggle").addEventListener("click", function(){
+  setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+});
+
+// ---------- Food groups ----------
+const GROUPS = {
+  bread:{name:"نان و غلات", kcal:80,  color:"#D5803B", icon:"🍞"},
+  meat: {name:"گوشت و جانشین‌ها", kcal:55, color:"#E56458", icon:"🍗"},
+  milk: {name:"شیر و لبنیات", kcal:120, color:"#5E9FE8", icon:"🥛"},
+  fruit:{name:"میوه", kcal:60, color:"#BF8EDA", icon:"🍎"},
+  veg:  {name:"سبزی", kcal:25, color:"#46A171", icon:"🥦"},
+  fat:  {name:"چربی", kcal:45, color:"#EAC26B", icon:"🫒"}
+};
+
+const REF = {
+  bread:["یک کف دست نان سنگک، بربری یا تافتون (۳۰ گرم)","۴ کف دست نان لواش","نصف لیوان برنج یا ماکارونی پخته","یک عدد سیب‌زمینی متوسط"],
+  meat:["۳۰ گرم گوشت قرمز، مرغ یا ماهی پخته (به اندازه یک قوطی کبریت)","یک عدد تخم‌مرغ","۳۰ گرم پنیر (یک قوطی کبریت)","نصف لیوان حبوبات پخته"],
+  milk:["یک لیوان شیر کم‌چرب","یک لیوان ماست کم‌چرب","نصف لیوان کشک"],
+  fruit:["یک عدد سیب، پرتقال یا هلوی متوسط","نصف موز بزرگ","یک لیوان هندوانه یا طالبی خردشده","۳ عدد خرما"],
+  veg:["یک لیوان سبزی خام (کاهو، خیار، گوجه و...)","نصف لیوان سبزی پخته","یک عدد گوجه‌فرنگی متوسط"],
+  fat:["یک قاشق چای‌خوری روغن مایع یا روغن زیتون","۵ عدد بادام یا فندق","۱۰ عدد پسته","یک قاشق غذاخوری تخمه"]
+};
+
+// ---------- Meal plans (units per meal, per calorie level) ----------
+const MEAL_NAMES = {b:"صبحانه", ms:"میان‌وعده صبح", l:"ناهار", me:"میان‌وعده عصر", d:"شام", mn:"میان‌وعده شب"};
+const MEAL_ICONS = {b:"🌅", ms:"🍵", l:"🍽️", me:"🍏", d:"🌙", mn:"✨"};
+const PLANS = {
+  1000:{b:{bread:1,meat:1,fat:1}, ms:{fruit:1}, l:{bread:2,meat:1,veg:2,fat:1}, me:{milk:1}, d:{bread:1,meat:1,veg:1}, mn:{milk:1,fruit:1}},
+  1200:{b:{bread:2,meat:1,fat:1}, ms:{fruit:1}, l:{bread:2,meat:1,veg:2,fat:1}, me:{milk:1,fruit:1}, d:{bread:1,meat:1,veg:1,fat:1}, mn:{milk:1,fruit:1}},
+  1400:{b:{bread:2,meat:1,fat:1}, ms:{fruit:1}, l:{bread:2,meat:2,veg:2,fat:2}, me:{milk:1,fruit:1}, d:{bread:2,meat:1,veg:2,fat:1}, mn:{milk:1,fruit:1}},
+  1600:{b:{bread:2,meat:1,fat:1,fruit:1}, ms:{bread:1,fruit:1}, l:{bread:2,meat:2,veg:2,fat:2}, me:{milk:1,fruit:1}, d:{bread:2,meat:2,veg:2,fat:2}, mn:{milk:1,fruit:1}},
+  1800:{b:{bread:2,milk:1,meat:1,fat:1}, ms:{bread:1,fruit:1}, l:{bread:3,meat:2,veg:2,fat:2}, me:{milk:1,fruit:1}, d:{bread:2,meat:2,veg:3,fat:1}, mn:{milk:1,fruit:2}},
+  2000:{b:{bread:3,milk:1,meat:1,fat:1}, ms:{bread:1,fruit:1}, l:{bread:3,meat:3,veg:2,fat:2}, me:{milk:1,fruit:1}, d:{bread:2,meat:2,veg:3,fat:2}, mn:{milk:1,fruit:2}},
+  2200:{b:{bread:3,milk:1,meat:1,fat:1,fruit:1}, ms:{bread:1,fruit:1}, l:{bread:3,meat:3,veg:2,fat:2}, me:{bread:1,milk:1,fruit:1}, d:{bread:2,meat:3,veg:3,fat:3}, mn:{milk:1,fruit:2}},
+  2500:{b:{bread:3,milk:1,meat:2,fat:1,fruit:1}, ms:{bread:2,fruit:1}, l:{bread:4,meat:3,veg:3,fat:3}, me:{bread:1,milk:1,fruit:1}, d:{bread:2,meat:3,veg:3,fat:3}, mn:{milk:1,fruit:2}},
+  2800:{b:{bread:3,milk:1,meat:2,fat:2,fruit:1}, ms:{bread:2,fruit:1,fat:1}, l:{bread:4,meat:4,veg:3,fat:3}, me:{bread:1,milk:1,fruit:1}, d:{bread:3,meat:3,veg:3,fat:3}, mn:{milk:1,fruit:2}},
+  3000:{b:{bread:4,milk:1,meat:2,fat:2,fruit:1}, ms:{bread:2,fruit:1,fat:1}, l:{bread:4,meat:4,veg:3,fat:3}, me:{bread:1,milk:1,fruit:1}, d:{bread:3,meat:3,veg:3,fat:3}, mn:{bread:1,milk:1,fruit:2}}
+};
+
+const fa = n => Math.round(n).toLocaleString("fa-IR");
+
+function mealKcal(meal){
+  return Object.entries(meal).reduce((s,[k,u]) => s + GROUPS[k].kcal*u, 0);
+}
+function planTotals(plan){
+  const t = {};
+  for(const meal of Object.values(plan))
+    for(const [k,u] of Object.entries(meal)) t[k] = (t[k]||0)+u;
+  return t;
+}
+
+document.getElementById("dietForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const errBox = document.getElementById("errBox");
+  errBox.classList.remove("show");
+
+  const gender = document.querySelector('input[name="gender"]:checked').value;
+  const h = parseFloat(document.getElementById("height").value);
+  const w = parseFloat(document.getElementById("weight").value);
+  const deficit = parseFloat(document.getElementById("goal").value);
+  const activity = parseFloat(document.getElementById("activity").value);
+
+  if(!h || h<120 || h>220 || !w || w<30 || w>250){
+    errBox.textContent = "لطفاً قد را بین ۱۲۰ تا ۲۲۰ سانتی‌متر و وزن را بین ۳۰ تا ۲۵۰ کیلوگرم وارد کنید.";
+    errBox.classList.add("show");
+    return;
+  }
+
+  // IBW — BMI ایده‌آل: آقایان ۲۳ × قد² | خانم‌ها ۲۲ × قد²
+  const hm = h/100;
+  const ibw = (gender==="male" ? 23 : 22) * hm * hm;
+
+  // basis weight — AIBW = IBW + (وزن فعلی − IBW) ÷ ۳
+  let basis, basisLbl, basisNote;
+  if(w > ibw){
+    basis = ibw + (w-ibw)/3;
+    basisLbl = "وزن تعدیل‌شده (AIBW)";
+    basisNote = "چون وزن فعلی شما بیشتر از وزن ایده‌آل است، یک‌سوم اختلاف به وزن ایده‌آل اضافه و وزن تعدیل‌شده (AIBW) مبنای محاسبه شد.";
+  } else if(w < ibw){
+    basis = w;
+    basisLbl = "وزن فعلی (مبنا)";
+    basisNote = "چون وزن فعلی شما کمتر از وزن ایده‌آل است، کالری بر اساس وزن فعلی محاسبه شد.";
+  } else {
+    basis = ibw;
+    basisLbl = "وزن ایده‌آل (مبنا)";
+    basisNote = "وزن شما در محدوده‌ی وزن ایده‌آل است و کالری بر اساس وزن ایده‌آل محاسبه شد.";
+  }
+
+  // انرژی: وزن مبنا × ۲۴ (خانم‌ها ×۰٫۹) × ۱٫۱ × ضریب فعالیت
+  const genderFactor = gender==="male" ? 1 : 0.9;
+  const maint = basis * 24 * genderFactor * 1.1 * activity;
+  let target = maint - deficit;
+  const floored = target < 1000;
+  if(floored) target = 1000;
+
+  // nearest plan
+  const keys = Object.keys(PLANS).map(Number);
+  const planKey = keys.reduce((a,b)=> Math.abs(b-target)<Math.abs(a-target)? b:a);
+  const plan = PLANS[planKey];
+  const planKcal = Object.values(plan).reduce((s,m)=>s+mealKcal(m),0);
+
+  // fill stats
+  document.getElementById("outIbw").textContent = fa(ibw);
+  document.getElementById("basisLbl").textContent = basisLbl;
+  document.getElementById("outBasis").textContent = fa(basis);
+  document.getElementById("outMaint").textContent = fa(maint);
+  document.getElementById("outTarget").textContent = fa(target);
+  document.getElementById("basisNote").textContent = "💡 " + basisNote + " انرژی نگهدارنده = " + fa(basis) + (gender==="male" ? " × ۲۴" : " × ۲۴ × ۰٫۹") + " × ۱٫۱ × " + activity.toLocaleString("fa-IR") + " = " + fa(maint) + " کیلوکالری." + (deficit>0 ? " برای هدف کاهش وزن، " + fa(deficit) + " کیلوکالری از آن کم شد." : (deficit<0 ? " برای هدف افزایش وزن، " + fa(-deficit) + " کیلوکالری به آن اضافه شد." : ""));
+  document.getElementById("floorNote").style.display = floored ? "block" : "none";
+
+  // درشت‌مغذی‌ها بر اساس درصدهای قابل‌تنظیم
+  lastTarget = target;
+  renderMacros();
+
+  // ثبت در تاریخچه
+  const goalLbl = deficit===0 ? "تثبیت وزن" : (deficit===700 ? "کاهش ۳ کیلو (−۷۰۰)" : (deficit===1000 ? "کاهش ۴ کیلو (−۱۰۰۰)" : (deficit===-500 ? "افزایش ۲ کیلو (+۵۰۰)" : "افزایش ۳ کیلو (+۷۰۰)")));
+  const histArr = getHist();
+  histArr.unshift({ts: Date.now(), gender, h, w, act: activity, goalLbl, ibw, basis, maint, target});
+  if(histArr.length > 15) histArr.length = 15;
+  setHist(histArr);
+
+  document.getElementById("planLabel").textContent = "— نزدیک‌ترین برنامه: حدود " + fa(planKcal) + " کیلوکالری";
+
+  // totals chips
+  const totals = planTotals(plan);
+  document.getElementById("totals").innerHTML = Object.entries(totals).map(([k,u])=>
+    `<span class="chip">${GROUPS[k].icon} ${GROUPS[k].name} <b>${fa(u)} واحد</b></span>`
+  ).join("");
+
+  // meal cards
+  document.getElementById("meals").innerHTML = Object.entries(plan).map(([mk, meal])=>{
+    const items = Object.entries(meal).map(([k,u])=>
+      `<span class="item"><span class="dot" style="background:${GROUPS[k].color}"></span>${GROUPS[k].name} × ${fa(u)}</span>`
+    ).join("");
+    return `<div class="meal glass">
+      <div class="meal-head">
+        <div class="mt"><span class="mi">${MEAL_ICONS[mk]}</span><h3>${MEAL_NAMES[mk]}</h3></div>
+        <span class="kcal">≈ ${fa(mealKcal(meal))} کیلوکالری</span>
+      </div>
+      <div class="items">${items}</div>
+    </div>`;
+  }).join("");
+
+  // reference cards (only once)
+  const refBox = document.getElementById("refCards");
+  if(!refBox.innerHTML){
+    refBox.innerHTML = Object.entries(GROUPS).map(([k,g])=>
+      `<div class="ref-card glass">
+        <h3><span class="em">${g.icon}</span>${g.name}</h3>
+        <div class="k">هر واحد ≈ ${fa(g.kcal)} کیلوکالری <span class="dot" style="background:${g.color}; margin-right:6px;"></span></div>
+        <ul>${REF[k].map(x=>`<li>${x}</li>`).join("")}</ul>
+      </div>`
+    ).join("");
+  }
+
+  const res = document.getElementById("results");
+  res.classList.add("show");
+  res.scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+// ---------- درصدهای درشت‌مغذی‌ها (قابل تغییر) ----------
+let lastTarget = null;
+const PCT_DEF = {cho:53, pro:17, fat:30};
+function getPcts(){
+  return {
+    cho: Math.max(0, parseFloat(document.getElementById("pctCho").value) || 0),
+    pro: Math.max(0, parseFloat(document.getElementById("pctPro").value) || 0),
+    fat: Math.max(0, parseFloat(document.getElementById("pctFat").value) || 0)
+  };
+}
+function renderMacros(){
+  const p = getPcts();
+  document.getElementById("choPct").textContent = p.cho.toLocaleString("fa-IR");
+  document.getElementById("proPct").textContent = p.pro.toLocaleString("fa-IR");
+  document.getElementById("fatPct").textContent = p.fat.toLocaleString("fa-IR");
+  const warn = document.getElementById("pctWarn");
+  const sum = p.cho + p.pro + p.fat;
+  if(sum !== 100){
+    warn.textContent = "⚠️ جمع درصدها " + fa(sum) + "٪ است؛ بهتر است ۱۰۰٪ باشد.";
+    warn.classList.add("show");
+  } else {
+    warn.classList.remove("show");
+  }
+  if(lastTarget == null) return;
+  document.getElementById("outCho").textContent = fa(lastTarget * p.cho/100 / 4);
+  document.getElementById("outPro").textContent = fa(lastTarget * p.pro/100 / 4);
+  document.getElementById("outFat").textContent = fa(lastTarget * p.fat/100 / 9);
+}
+function savePcts(){
+  try{ localStorage.setItem("diet-macros", JSON.stringify(getPcts())); }catch(e){}
+}
+["pctCho","pctPro","pctFat"].forEach(id =>
+  document.getElementById(id).addEventListener("input", () => { savePcts(); renderMacros(); })
+);
+document.getElementById("pctReset").addEventListener("click", () => {
+  document.getElementById("pctCho").value = PCT_DEF.cho;
+  document.getElementById("pctPro").value = PCT_DEF.pro;
+  document.getElementById("pctFat").value = PCT_DEF.fat;
+  savePcts(); renderMacros();
+});
+(function loadPcts(){
+  try{
+    const s = JSON.parse(localStorage.getItem("diet-macros"));
+    if(s && typeof s.cho === "number"){
+      document.getElementById("pctCho").value = s.cho;
+      document.getElementById("pctPro").value = s.pro;
+      document.getElementById("pctFat").value = s.fat;
+    }
+  }catch(e){}
+  renderMacros();
+})();
+
+// ---------- تاریخچه محاسبات ----------
+function getHist(){
+  try{ return JSON.parse(localStorage.getItem("diet-history")) || []; }catch(e){ return []; }
+}
+function setHist(arr){
+  try{ localStorage.setItem("diet-history", JSON.stringify(arr)); }catch(e){}
+  renderHist();
+}
+function renderHist(){
+  const list = getHist();
+  document.getElementById("historySec").style.display = list.length ? "block" : "none";
+  document.getElementById("histList").innerHTML = list.map((it, i) => {
+    const d = new Date(it.ts);
+    const when = d.toLocaleDateString("fa-IR") + " — " + d.toLocaleTimeString("fa-IR", {hour:"2-digit", minute:"2-digit"});
+    return `<div class="hist-row">
+      <span class="h-date">🕘 ${when}</span>
+      <span>${it.gender === "male" ? "👨 آقا" : "👩 خانم"}</span>
+      <span>📏 قد ${fa(it.h)}</span>
+      <span>⚖️ وزن ${fa(it.w)}</span>
+      <span>🎯 ${it.goalLbl}</span>
+      <span class="h-kcal">⚡ ${fa(it.target)} کیلوکالری</span>
+      <button type="button" class="h-del" data-i="${i}" title="حذف این ردیف">✕</button>
+    </div>`;
+  }).join("");
+}
+document.getElementById("histList").addEventListener("click", (e) => {
+  const b = e.target.closest(".h-del");
+  if(!b) return;
+  const arr = getHist();
+  arr.splice(+b.dataset.i, 1);
+  setHist(arr);
+});
+document.getElementById("histClear").addEventListener("click", () => {
+  if(confirm("همه‌ی تاریخچه پاک شود؟")) setHist([]);
+});
+renderHist();
+
+// ---------- فیلتر بخش‌های نتایج ----------
+const ALL_SECS = ["stats","macros","units","meals","ref"];
+function getFilters(){
+  try{
+    const s = JSON.parse(localStorage.getItem("diet-filters"));
+    if(Array.isArray(s) && s.length) return s.filter(x=>ALL_SECS.includes(x));
+  }catch(e){}
+  return ["stats"];
+}
+function setFilters(arr){
+  try{ localStorage.setItem("diet-filters", JSON.stringify(arr)); }catch(e){}
+  renderFilters(arr);
+}
+function renderFilters(active){
+  document.querySelectorAll("#resFilter .f-chip").forEach(b=>{
+    if(b.dataset.sec==="all"){ b.classList.toggle("active", active.length===ALL_SECS.length); return; }
+    b.classList.toggle("active", active.includes(b.dataset.sec));
+  });
+  document.querySelectorAll(".res-sec").forEach(s=>{
+    s.classList.toggle("show", active.includes(s.dataset.sec));
+  });
+}
+document.getElementById("resFilter").addEventListener("click",(e)=>{
+  const b = e.target.closest(".f-chip");
+  if(!b) return;
+  let act = getFilters();
+  if(b.dataset.sec==="all"){
+    act = act.length===ALL_SECS.length ? ["stats"] : ALL_SECS.slice();
+  } else if(act.includes(b.dataset.sec)){
+    act = act.filter(x=>x!==b.dataset.sec);
+    if(!act.length) act = ["stats"];
+  } else {
+    act.push(b.dataset.sec);
+  }
+  setFilters(act);
+});
+renderFilters(getFilters());
+
+// ---------- PWA: service worker ----------
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
