@@ -1,5 +1,3 @@
-@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
-
 package com.dietie.app
 
 import android.content.Context
@@ -49,7 +47,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -61,7 +58,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -141,7 +137,7 @@ private fun DietieTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
             secondaryContainer = Color(0xFF113C61),
             tertiaryContainer = Color(0xFF164A35)
         )
-        else -> expressiveLightColorScheme().copy(
+        else -> androidx.compose.material3.lightColorScheme(
             primary = Color(0xFF6A4BD4),
             secondary = Color(0xFF1F6FC2),
             tertiary = Color(0xFF2F9464),
@@ -161,7 +157,7 @@ private fun DietieTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
         extraLarge = RoundedCornerShape(38.dp)
     )
 
-    MaterialExpressiveTheme(
+    MaterialTheme(
         colorScheme = colorScheme,
         shapes = shapes,
         content = content
